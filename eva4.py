@@ -12,13 +12,13 @@ import numpy as np
 
 # --- Configuration de la page ---
 st.set_page_config(
-    page_title="CINTIA - Évaluation des résumés",
+    page_title="EVA - Évaluation des résumés",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.markdown("<h1 style='color:#4b77ff;'>CINTIA - Outil d'évaluation des résumés juridiques</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color:#4b77ff;'>EVA - Outil d'évaluation des résumés juridiques</h1>", unsafe_allow_html=True)
 st.write("Téléchargez deux fichiers (PDF ou DOCX) : un document original et son résumé, puis lancez l'évaluation.")
 
 # --- Sidebar OpenAI ---
@@ -28,6 +28,13 @@ model_string = st.sidebar.text_input(
     "Modèle OpenAI",
     value=os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 )
+
+# Vérification de la clé API
+if not openai_api_key:
+    st.warning("⚠️ Veuillez entrer votre clé OpenAI pour évaluer le résumé.")
+else:
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+    os.environ["OPENAI_MODEL"] = model_string
 
 # --- Fonctions pour extraire le texte ---
 def extraire_texte_pdf(pdf_file):
@@ -49,7 +56,7 @@ with col2:
     fichier2 = st.file_uploader("📝 Résumé", type=["pdf", "docx"])
 
 # --- Evaluation ---
-if fichier1 and fichier2:
+if fichier1 and fichier2 and openai_api_key:
     # Extraction
     texte1 = extraire_texte_pdf(fichier1) if fichier1.type == "application/pdf" else extraire_texte_docx(fichier1)
     texte2 = extraire_texte_pdf(fichier2) if fichier2.type == "application/pdf" else extraire_texte_docx(fichier2)
@@ -86,7 +93,7 @@ if fichier1 and fichier2:
                 ),
                 GEval(
                     name="Citations",
-                    criteria="S'il ya des articles de loi ou jurisprudences cités dans le texte source valide dans le résumé sont-elles  identique au texte source ? Réponds strictement en français.",
+                    criteria="S'il y a des articles de loi ou jurisprudences cités dans le texte source, sont-ils identiques dans le résumé ? Réponds strictement en français.",
                     evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
                 )
             ]
