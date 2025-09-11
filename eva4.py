@@ -9,6 +9,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import matplotlib
+
+# --- Force UTF-8 pour les graphiques (évite les erreurs avec les accents) ---
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 
 # --- Configuration de la page ---
 st.set_page_config(
@@ -39,7 +43,8 @@ else:
 # --- Fonctions pour extraire le texte ---
 def extraire_texte_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
-    return "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
+    textes = [page.extract_text() for page in reader.pages if page.extract_text()]
+    return "\n".join(textes)
 
 def extraire_texte_docx(docx_file):
     doc = Document(docx_file)
