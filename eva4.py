@@ -82,22 +82,26 @@ if fichier1 and fichier2 and openai_api_key:
             # Définition des métriques
             metrics = [
                 GEval(
+                    threshold=0.6,
                     name="Concision",
                     criteria="Le résumé est-il concis et représente tous les éléments clés de la source ? Réponds strictement en français.",
                     evaluation_params=[LLMTestCaseParams.ACTUAL_OUTPUT],
                 ),
                 GEval(
                     name="Couverture",
+                    threshold=0.7,
                     criteria="Le résumé couvre-t-il toutes les informations juridiques importantes du texte source ? Réponds strictement en français.",
                     evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
                 ),
                 GEval(
                     name="Exactitude",
+                    threshold=0.8,
                     criteria="Le résumé représente-t-il fidèlement le contenu du texte source sans erreurs factuelles ? Réponds strictement en français.",
                     evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
                 ),
                 GEval(
                     name="Citations",
+                    threshold=0.8,
                     criteria="S'il y a des articles de loi ou jurisprudences cités dans le texte source, sont-ils identiques dans le résumé ? Réponds strictement en français.",
                     evaluation_params=[LLMTestCaseParams.INPUT, LLMTestCaseParams.ACTUAL_OUTPUT],
                 )
